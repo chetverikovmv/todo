@@ -1,19 +1,16 @@
-import React, { useState } from "react"
-import { IPpoint } from "../models"
+import { useState } from "react"
 import { Check } from "./icons/Checkbox"
+import { Delete } from "./icons/Delete"
+import { DeleteHover } from "./icons/DeleteHover"
+import { Plus } from "./icons/Plus"
+import { IPointProps } from "../interfaces/props/IPointProps"
 import cn from "classnames"
 
-interface PointProps {
-    point: IPpoint
-    onChange: (id: number, title: string, isCheckbox: boolean) => void
-    onDelete: (id: number) => void
-    onClick: (id: number) => void
-}
+export function Point({ point, onChange, onDelete, onClick }: IPointProps) {
 
-export function Point({ point, onChange, onDelete, onClick }: PointProps) {
-
-    const [checkbox, setCheckbox] = useState(point.isCheckbox)
-    const [isChecked, setIsChecked] = useState(point.isChecked)
+    const [checkbox, setCheckbox] = useState(point.isCheckbox);
+    const [isChecked, setIsChecked] = useState(point.isChecked);
+    const [isDeleteButtonHover, setIsDeleteButtonHover] = useState(<Delete />);
 
     const changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (!checkbox) {
@@ -32,22 +29,28 @@ export function Point({ point, onChange, onDelete, onClick }: PointProps) {
     }
 
     return (
-        <div className="text-center flex">
+        <div className="text-center flex mb-1">
             {checkbox &&
                 <div onClick={clickHadler} className="rounded border bg-zinc-100 px-3 py-3 w-6 h-6 cursor-pointer relative hover:bg-zinc-200 active:bg-zinc-300">
                     {isChecked && <Check />}
                 </div>}
 
-            {!checkbox && <div className="text-center text-slate-500 text-base align-middle">+</div>}
+            {!checkbox && <div className="flex items-center px-2"><Plus /></div>}
 
-            <input value={point.title} onChange={changeHandler} 
-            className={cn("mx-2 px-2 outline-zinc-200 w-[100%]",
-            {
-                "line-through": isChecked
-            }
-            )} 
-            type="text" placeholder='Новый пункт' />
-            {checkbox && <div onClick={() => onDelete(point.id)} className="text-center text-slate-500 text-xl cursor-pointer hover:text-slate-700 active:text-slate-900">X</div>}
+            <input value={point.title} onChange={changeHandler}
+                className={cn("mx-2 px-2 outline-zinc-200 w-[100%]",
+                    {
+                        "line-through": isChecked
+                    }
+                )}
+                type="text" placeholder='Новый пункт' />
+            {/* {checkbox && <button onClick={() => onDelete(point.id)} className="text-center text-slate-500 text-xl cursor-pointer hover:text-slate-700 active:text-slate-900">X</button>} */}
+            {checkbox && <button
+                onMouseEnter={() => setIsDeleteButtonHover(<DeleteHover />)}
+                onMouseLeave={() => setIsDeleteButtonHover(<Delete />)}
+                onClick={() => onDelete(point.id)}>
+                {isDeleteButtonHover}
+            </button>}
         </div>
     )
 }

@@ -1,13 +1,8 @@
 import { ArrowDown } from "./icons/ArrowDown"
 import { ArrowRight } from "./icons/ArrowRight"
+import { ICountProps } from "../interfaces/props/ICountProps";
 
-interface CountProps {
-    clickHandler: () => void
-    showCheckedPoints: boolean
-    length: number
-}
-
-export function CountOfCheckedPoints({ clickHandler, showCheckedPoints, length }: CountProps) {
+export function CountOfCheckedPoints({ clickHandler, showCheckedPoints, length }: ICountProps) {
 
     const stringOfCountOfCheckedPoints = (count: number) => {
         const STRING_OPTION1 = 'отмеченный пункт';
@@ -15,16 +10,25 @@ export function CountOfCheckedPoints({ clickHandler, showCheckedPoints, length }
         const STRING_OPTION3 = 'отмеченных пунктов';
 
         let string = '';
+
         if (count === 1) {
-            string = `${count} ${STRING_OPTION1}`
+            return string = `${count} ${STRING_OPTION1}`;
         }
 
-        if (count > 1 && count < 5) {
-            string = `${count} ${STRING_OPTION2}`
+        if (count % 10 === 1 && count >= 21) {
+            return string = `${count} ${STRING_OPTION1}`;
         }
 
-        if (count > 4) {
-            string = `${count} ${STRING_OPTION3}`
+        if (count % 100 >= 11 && count % 100 <= 20) {
+            return string = `${count} ${STRING_OPTION3}`;
+        }
+
+        if (count % 10 >= 2 && count % 10 <= 4) {
+            return string = `${count} ${STRING_OPTION2}`;
+        }
+
+        if ((count % 10 >= 5 && count % 10 <= 9) || count % 10 === 0) {
+            return string = `${count} ${STRING_OPTION3}`;
         }
 
         return string

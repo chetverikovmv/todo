@@ -1,16 +1,17 @@
-import React, { useState } from "react";
-import { IPpoint } from "./models";
+import { useState } from "react";
+import { IPoint } from "../interfaces/IPoint";
 
 export function usePoints() {
-    const [points, setPoints] = useState<IPpoint[]>([
-        {
+    const FIRST_POINT = {
             id: 1,
             title: '',
             isChecked: false,
             isCheckbox: false
-        }])
+        }
 
-    function addPoint(point: IPpoint, isCheckbox: boolean, id: number) {        
+    const [points, setPoints] = useState<IPoint[]>([FIRST_POINT]);
+
+    function addPoint(point: IPoint, isCheckbox: boolean, id: number) {        
         if (!isCheckbox) {
             const pointsCopy = [...points];
             const current = pointsCopy.find(point => point.id === id);
