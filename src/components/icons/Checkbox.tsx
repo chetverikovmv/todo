@@ -1,6 +1,6 @@
 import {BsCheck} from "react-icons/bs"
 
-export function Check () {
+export function Checkbox () {
 
     return (
         <div>

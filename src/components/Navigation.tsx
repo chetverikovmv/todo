@@ -6,7 +6,7 @@ export function Navigation() {
             <span className="font-bold">TODO</span>
 
             <span>
-                <Link className="mr-3 hover:underline" to="/">List</Link>
+                <Link className="mr-3 hover:underline" to="/">Main</Link>
                 <Link className="hover:underline" to="/about">About</Link>
             </span>
         </nav>

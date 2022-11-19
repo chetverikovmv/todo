@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Check } from "./icons/Checkbox"
+import { Checkbox } from "./icons/Checkbox"
 import { Delete } from "./icons/Delete"
 import { DeleteHover } from "./icons/DeleteHover"
 import { Plus } from "./icons/Plus"
@@ -11,6 +11,7 @@ export function Point({ point, onChange, onDelete, onClick }: IPointProps) {
     const [checkbox, setCheckbox] = useState(point.isCheckbox);
     const [isChecked, setIsChecked] = useState(point.isChecked);
     const [isDeleteButtonHover, setIsDeleteButtonHover] = useState(<Delete />);
+  
 
     const changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (!checkbox) {
@@ -32,7 +33,7 @@ export function Point({ point, onChange, onDelete, onClick }: IPointProps) {
         <div className="text-center flex mb-1">
             {checkbox &&
                 <div onClick={clickHadler} className="rounded border bg-zinc-100 px-3 py-3 w-6 h-6 cursor-pointer relative hover:bg-zinc-200 active:bg-zinc-300">
-                    {isChecked && <Check />}
+                    {isChecked && <Checkbox />}
                 </div>}
 
             {!checkbox && <div className="flex items-center px-2"><Plus /></div>}
@@ -44,7 +45,7 @@ export function Point({ point, onChange, onDelete, onClick }: IPointProps) {
                     }
                 )}
                 type="text" placeholder='Новый пункт' />
-            {/* {checkbox && <button onClick={() => onDelete(point.id)} className="text-center text-slate-500 text-xl cursor-pointer hover:text-slate-700 active:text-slate-900">X</button>} */}
+
             {checkbox && <button
                 onMouseEnter={() => setIsDeleteButtonHover(<DeleteHover />)}
                 onMouseLeave={() => setIsDeleteButtonHover(<Delete />)}
