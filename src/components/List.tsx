@@ -33,7 +33,6 @@ export function List({ list, onDelete, onClick }: IListProps) {
             <div className='flex items-center mt-1 ml-72'
                 onMouseEnter={() => setIsDeleteButtonHover(<DeleteHover />)}
                 onMouseLeave={() => setIsDeleteButtonHover(<Delete />)}
-                // onClick={() => onDelete(list.listId)}>
                 onClick={deleteHandler}>
                 <button>
                     {isDeleteButtonHover}

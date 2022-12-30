@@ -1,7 +1,7 @@
 import { Point } from '../components/Point';
 import { CountOfCheckedPoints } from "../components/CountOfCheckedPoints"
 import { useState, useEffect } from "react";
-import { usePoints } from "../hooks/points";
+import { usePoints } from "../hooks/usePoints";
 import { IPoint } from '../interfaces/IPoint';
 import { List } from '../components/List';
 import { Loader } from '../components/Loader';
@@ -10,6 +10,8 @@ import { InputTitle } from '../components/InputTitle';
 import { Notification } from '../components/Notification';
 import { CSSTransition } from 'react-transition-group';
 import '../index.css';
+import { useTypedSelector } from '../hooks/useTypedSelector';
+import { UseActions } from '../hooks/useActions';
 
 
 export function MainPage() {
@@ -17,17 +19,20 @@ export function MainPage() {
         addPoint,
         clearPointsAndUpdateLists,
         setPointsByListId,
-        lists,
         toggleCheckbox,
         changePointTitle,
         deletePoint,
-        fetchPostList,
-        deleteList,
+        postList, 
         changeListTitle,
         currentListTitle,
-        loading,
-        error,
         notif } = usePoints();
+
+    const { lists, loading, error } = useTypedSelector(state => state.lists);
+    const { fetchGetList, fetchDeleteListById } = UseActions();
+    useEffect(() => {
+        fetchGetList()
+      }, [])
+
     const [showCheckedPoints, setShowCheckedPoints] = useState(true);
     const [isListMode, setIsListMode] = useState(false);
 
@@ -36,12 +41,14 @@ export function MainPage() {
     useEffect(() => {
         if (notif === '') {
             setNotifVisible(false);
-            setTimeout(() => { setNotifTitle(notif) }, 300)
+            const timer = setTimeout(() => { setNotifTitle(notif) }, 300);
+            return () => clearTimeout(timer);
         }
         else {
             setNotifTitle(notif)
             setNotifVisible(true)
         }
+        
     }, [notif])
 
     const changeHandler = (id: number, title: string, isCheckbox: boolean) => {
@@ -76,13 +83,13 @@ export function MainPage() {
     }
 
     const deleteHandlerList = (listId: string) => {
-        deleteList(listId);
+        fetchDeleteListById(listId);
     }
 
     const clickHandlerButton = () => {
         isListMode ?
             clearPointsAndUpdateLists()
-            : fetchPostList();
+            : postList();
 
         setIsListMode(prev => !prev);
     }
