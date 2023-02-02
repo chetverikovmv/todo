@@ -4,13 +4,11 @@ import cn from "classnames"
 
 export function PointReadOnly({ point}: IPointProps) {
 
-
-
     return (
         <div className="text-center flex mb-1">
             {point.isCheckbox &&
                 <>
-                    <div className="rounded border bg-zinc-100 px-3 py-3 w-6 h-6 cursor-pointer relative">
+                    <div className="rounded border bg-zinc-50 px-3 py-3 w-6 h-6 cursor-pointer relative">
                         {point.isChecked && <Checkbox />}
                     </div>
 

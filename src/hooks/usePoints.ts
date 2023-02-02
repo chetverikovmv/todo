@@ -1,8 +1,6 @@
 import { useTypedSelector } from './useTypedSelector';
-import axios, { AxiosError } from 'axios';
 import { useState, useEffect } from "react";
 import { IPoint } from "../interfaces/IPoint";
-import { IList } from "../interfaces/ILists";
 import { UseActions } from './useActions';
 
 export function usePoints() {
@@ -26,21 +24,15 @@ export function usePoints() {
             const current = pointsCopy.find(point => point.id === id);
             if (current) {
                 current.isCheckbox = !current.isCheckbox
-            }           
+            }
             setPoints([...pointsCopy, point])
         }
     }
 
+
+    const checkEmptyPoint = (item: { title: string; }) => item.title !== ''
     function _isEmptyList() {
-        if (currentListTitle !== '') {
-            return false
-        }
-        for (let point of points) {
-            if (point.title !== '') {
-                return false
-            }
-        }
-        return true
+        return !currentListTitle && !points.some(checkEmptyPoint)
     }
 
     function clearPointsAndUpdateLists() {
@@ -56,16 +48,12 @@ export function usePoints() {
         setPoints([FIRST_POINT]);
     }
 
-    function setPointsByListId(listId: string) {     
+    function setPointsByListId(listId: string) {
         getListById(listId);
         setCurrentListId(listId);
 
         const currentList = lists.find(list => list.listId === listId);
-        let title: string = ''
-        if (currentList) {
-            title = currentList.listTitle
-        }
-        setCurrentListTitle(title)
+        currentList ? setCurrentListTitle(currentList.listTitle) : setCurrentListTitle('')
     }
 
     function toggleCheckbox(id: number) {
@@ -78,8 +66,8 @@ export function usePoints() {
     }
 
     function repeatTitleValidation(title: string) {
-        const duplicate = points.find(point => point.title === title);
-        if (duplicate && duplicate.title !== '') {                    
+        const duplicate = points.find(point => point.title.toLowerCase() === title.toLowerCase());
+        if (duplicate && duplicate.title !== '') {
             setNotif(duplicate.title)
             setTimeout(() => {
                 setNotif('')
@@ -127,11 +115,11 @@ export function usePoints() {
         }
     }
 
-    function postList() {        
-            fetchPostList(points, setCurrentListId);    
+    function postList() {
+        fetchPostList(points, setCurrentListId);
     }
 
-     useEffect(() => {
+    useEffect(() => {
         patchList()
     }, [points])
 
@@ -147,10 +135,10 @@ export function usePoints() {
         lists,
         toggleCheckbox,
         changePointTitle,
-        deletePoint,    
+        deletePoint,
         postList,
         changeListTitle,
-        currentListTitle,       
+        currentListTitle,
         notif
     }
 }

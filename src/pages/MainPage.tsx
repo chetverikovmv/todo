@@ -2,7 +2,6 @@ import { Point } from '../components/Point';
 import { CountOfCheckedPoints } from "../components/CountOfCheckedPoints"
 import { useState, useEffect } from "react";
 import { usePoints } from "../hooks/usePoints";
-import { IPoint } from '../interfaces/IPoint';
 import { List } from '../components/List';
 import { Loader } from '../components/Loader';
 import { ErrorMessage } from '../components/ErrorMessage';
@@ -15,6 +14,8 @@ import { UseActions } from '../hooks/useActions';
 
 
 export function MainPage() {
+    const CLOSE_AND_BACK_TO_LISTS_TEXT = 'Закрыть и вернуться к спискам'; 
+    const CREATE_NEW_LIST_TEXT = 'Создать новый список';
     const { points,
         addPoint,
         clearPointsAndUpdateLists,
@@ -99,11 +100,11 @@ export function MainPage() {
     }
 
     return (
-        <div className="container mx-auto max-w-md pt-5">
+        <div className="container mx-auto max-w-lg px-4 pt-5">
 
             <button className='px-4 py-2 mb-4 block mx-auto text-cyan-100 bg-cyan-700 rounded hover:bg-cyan-600'
                 onClick={clickHandlerButton}>
-                {isListMode ? 'Закрыть и вернуться к спискам' : 'Создать новый список'}
+                {isListMode ? CLOSE_AND_BACK_TO_LISTS_TEXT : CREATE_NEW_LIST_TEXT}
             </button>
 
             {loading && <Loader />}
