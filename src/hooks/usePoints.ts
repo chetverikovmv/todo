@@ -13,9 +13,9 @@ export function usePoints() {
 
     const [notif, setNotif] = useState('');
 
-    const { points, currentListId, currentListTitle } = useTypedSelector(state => state.currentList);
+    const { points, currentListId, currentListTitle, currentListDate } = useTypedSelector(state => state.currentList);
     const { lists } = useTypedSelector(state => state.lists);
-    const { setPoints, setCurrentListId, setCurrentListTitle } = UseActions();
+    const { setPoints, setCurrentListId, setCurrentListTitle, setCurrentListDate } = UseActions();
     const { fetchGetList, fetchDeleteListById, fetchPatchList, fetchPostList } = UseActions();
 
     function addPoint(point: IPoint, isCheckbox: boolean, id: number) {
@@ -45,6 +45,7 @@ export function usePoints() {
 
         setCurrentListId('');
         setCurrentListTitle('');
+        setCurrentListDate(null);
         setPoints([FIRST_POINT]);
     }
 
@@ -53,9 +54,10 @@ export function usePoints() {
         setCurrentListId(listId);
 
         const currentList = lists.find(list => list.listId === listId);
-        currentList ? setCurrentListTitle(currentList.listTitle) : setCurrentListTitle('')
+        currentList ? setCurrentListTitle(currentList.listTitle) : setCurrentListTitle('');
+        currentList ? setCurrentListDate(currentList.listDate) : setCurrentListDate(null);
     }
-
+       
     function toggleCheckbox(id: number) {
         const pointsCopy = [...points];
         const current = pointsCopy.find(point => point.id === id);
@@ -111,12 +113,12 @@ export function usePoints() {
 
     function patchList() {
         if (currentListId && points.length !== 0) {
-            fetchPatchList(points, currentListId, currentListTitle)
-        }
+            fetchPatchList(points, currentListId, currentListTitle, currentListDate)
+        }        
     }
 
     function postList() {
-        fetchPostList(points, setCurrentListId);
+        fetchPostList(points, setCurrentListId, setCurrentListDate);
     }
 
     useEffect(() => {
@@ -139,6 +141,7 @@ export function usePoints() {
         postList,
         changeListTitle,
         currentListTitle,
+        currentListId,
         notif
     }
 }

@@ -19,3 +19,10 @@ export const setCurrentListTitle = (ListTitle: string) => {
         dispatch({ type: CurrentListActionTypes.SET_CURRENT_LIST_TITLE, payload: ListTitle })
     }
 }
+
+export const setCurrentListDate = (ListDate: Date | null) => {
+    return (dispatch: Dispatch<CurrentListAction>) => {
+        dispatch({ type: CurrentListActionTypes.SET_CURRENT_LIST_DATE, payload: ListDate })
+    }
+}
+

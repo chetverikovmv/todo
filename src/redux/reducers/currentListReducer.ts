@@ -10,18 +10,21 @@ const initialPoint: IPoint = {
 const initialState: ICurrentListState = {
     points: [initialPoint],
     currentListId: '',
-    currentListTitle: ''
+    currentListTitle: '',
+    currentListDate: null
 };
 
 export const currentListReducer = (state = initialState, action: CurrentListAction): ICurrentListState => {
     switch (action.type) {
         case CurrentListActionTypes.SET_POINTS:
-            return { ...state,  points: action.payload}
+            return { ...state, points: action.payload }
         case CurrentListActionTypes.SET_CURRENT_LIST_ID:
-            return { ...state,  currentListId: action.payload}
+            return { ...state, currentListId: action.payload }
         case CurrentListActionTypes.SET_CURRENT_LIST_TITLE:
-            return { ...state,  currentListTitle: action.payload}
-       
+            return { ...state, currentListTitle: action.payload }
+        case CurrentListActionTypes.SET_CURRENT_LIST_DATE:
+            return { ...state, currentListDate: action.payload }
+
         default:
             return state
     }

@@ -12,10 +12,18 @@ import '../index.css';
 import { useTypedSelector } from '../hooks/useTypedSelector';
 import { UseActions } from '../hooks/useActions';
 
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { registerLocale, setDefaultLocale } from "react-datepicker";
+import ru from 'date-fns/locale/ru';
+import { IList } from '../interfaces/ILists';
+registerLocale('ru', ru);
+
 
 export function MainPage() {
-    const CLOSE_AND_BACK_TO_LISTS_TEXT = 'Закрыть и вернуться к спискам'; 
+    const CLOSE_AND_BACK_TO_LISTS_TEXT = 'Закрыть и вернуться к спискам';
     const CREATE_NEW_LIST_TEXT = 'Создать новый список';
+    const SHOW_LISTS_BY_RANGE_TEXT = 'Показать списки за период';
     const { points,
         addPoint,
         clearPointsAndUpdateLists,
@@ -23,22 +31,30 @@ export function MainPage() {
         toggleCheckbox,
         changePointTitle,
         deletePoint,
-        postList, 
+        postList,
         changeListTitle,
         currentListTitle,
+        currentListId,
         notif } = usePoints();
 
     const { lists, loading, error } = useTypedSelector(state => state.lists);
     const { fetchGetList, fetchDeleteListById } = UseActions();
     useEffect(() => {
         fetchGetList()
-      }, [])
+    }, [])
 
     const [showCheckedPoints, setShowCheckedPoints] = useState(true);
     const [isListMode, setIsListMode] = useState(false);
 
     const [notifVisible, setNotifVisible] = useState(false);
     const [notifTitle, setNotifTitle] = useState(notif);
+
+    const [startDate, setStartDate] = useState<Date>(new Date());
+    const [endDate, setEndDate] = useState<Date>(new Date());
+    const [fileredLists, setFileredLists] = useState<IList[]>(lists);
+
+    const [rangeChecked, setRangeChecked] = useState(false);
+   
     useEffect(() => {
         if (notif === '') {
             setNotifVisible(false);
@@ -49,8 +65,20 @@ export function MainPage() {
             setNotifTitle(notif)
             setNotifVisible(true)
         }
-        
+
     }, [notif])
+
+    const filterLists = (startDate: Date, endDate: Date) => {
+        setFileredLists(lists.filter(list => {
+            return list.listDate && (Date.parse(`${list.listDate}`) >= startDate.setHours(0, 0, 0, 0) && Date.parse(`${list.listDate}`) <= endDate.setHours(23, 59, 59, 59))
+        }))
+    }
+
+    useEffect(() => {
+        filterLists(startDate, endDate)
+    }, [startDate, endDate, lists])
+
+
 
     const changeHandler = (id: number, title: string, isCheckbox: boolean) => {
 
@@ -102,13 +130,12 @@ export function MainPage() {
     return (
         <div className="container mx-auto max-w-lg px-4 pt-5">
 
-            <button className='px-4 py-2 mb-4 block mx-auto text-cyan-100 bg-cyan-700 rounded hover:bg-cyan-600'
-                onClick={clickHandlerButton}>
+            <button className='px-4 py-2 mb-4 block mx-auto text-cyan-100 bg-cyan-700 rounded hover:bg-cyan-600 disabled:opacity-75'
+                onClick={clickHandlerButton}
+                disabled={!currentListId && isListMode}>
                 {isListMode ? CLOSE_AND_BACK_TO_LISTS_TEXT : CREATE_NEW_LIST_TEXT}
             </button>
 
-            {loading && <Loader />}
-            {error && <ErrorMessage error={error} />}
 
             {isListMode && <>
 
@@ -123,7 +150,7 @@ export function MainPage() {
                 <CSSTransition
                     in={notifVisible}
                     timeout={500}
-                    classNames="notif"
+                    classNames="fade"
                     unmountOnExit
                 >
                     <Notification title={notifTitle} />
@@ -131,7 +158,74 @@ export function MainPage() {
 
             </>}
 
-            {!isListMode && !loading && lists.map(list => <List list={list} onDelete={deleteHandlerList} onClick={clickHandlerList} key={list.listId} />)}
+            {!isListMode &&
+                <>
+                    {/* <p>Показать списки за период</p> */}
+                    <input
+                        id='show-lists-by-range'
+                        type="checkbox"
+                        checked={rangeChecked}
+                        onChange={() => setRangeChecked(!rangeChecked)} /> <label htmlFor="show-lists-by-range"> {SHOW_LISTS_BY_RANGE_TEXT} </label>
+
+                    {/* <CSSTransition
+                        in={rangeChecked}
+                        timeout={500}
+                        classNames="notif"
+                        unmountOnExit
+                    > */}
+                    {/* {rangeChecked && */}
+
+                        <CSSTransition
+                            in={rangeChecked}
+                            timeout={500}
+                            classNames="fade"
+                            unmountOnExit
+                        >
+                            <div>
+                                <div className="flex">
+                                    <p className="mt-3 mr-2 w-10">C: </p>
+                                    <DatePicker
+                                        locale="ru"
+                                        selected={startDate}
+                                        dateFormat="dd.MM.yyyy"
+                                        placeholderText="Дата"
+                                        onChange={(date: Date) => setStartDate(date)}
+                                        selectsStart
+                                        startDate={startDate}
+                                        endDate={endDate}
+                                        className="mt-2"
+                                    />
+                                </div>
+
+                                <div className="flex">
+                                    <p className="mt-3 mr-2 w-10">По: </p>
+                                    <DatePicker
+                                        locale="ru"
+                                        selected={endDate}
+                                        dateFormat="dd.MM.yyyy"
+                                        placeholderText="Дата"
+                                        onChange={(date: Date) => setEndDate(date)}
+                                        selectsEnd
+                                        startDate={startDate}
+                                        endDate={endDate}
+                                        minDate={startDate}
+                                        className="mt-2"
+                                    />
+                                </div>
+                            </div>
+                        </CSSTransition>
+                    {/* } */}
+                    {/* </CSSTransition> */}
+
+                </>
+
+            }
+
+            {loading && <Loader />}
+            {error && <ErrorMessage error={error} />}
+
+            {!isListMode && !loading && !rangeChecked && lists.map(list => <List list={list} onDelete={deleteHandlerList} onClick={clickHandlerList} key={list.listId} />)}
+            {!isListMode && !loading && rangeChecked && fileredLists.map(list => <List list={list} onDelete={deleteHandlerList} onClick={clickHandlerList} key={list.listId} />)}
 
         </div>
     )

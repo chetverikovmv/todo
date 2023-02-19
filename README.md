@@ -1,5 +1,5 @@
 # ToDo App
 
-React, TypeScript, Tailwind CSS
+React, Redux, TypeScript, Tailwind CSS, Firebase, react-datepicker
 
 - https://todo-f4967.firebaseapp.com/

@@ -13,7 +13,8 @@ const prepareGetData = (response: any) => {
         preparedData.push({
             listId: key,
             list: response.data[key].points,
-            listTitle: response.data[key].listTitle
+            listTitle: response.data[key].listTitle,
+            listDate: response.data[key].listDate
         })
     }
     return preparedData
@@ -35,6 +36,7 @@ export const fetchGetList = () => {
 }
 
 export const fetchDeleteListById = (listId: string) => {
+    
     return async (dispatch: Dispatch<ListsAction>) => {
         try {
             dispatch({ type: ListsActionTypes.FETCH_LISTS })
@@ -57,18 +59,22 @@ export const fetchDeleteListById = (listId: string) => {
     }
 }
 
-export const fetchPatchList = (points: IPoint[], listId: string, listTitle: string) => {
+export const fetchPatchList = (points: IPoint[], listId: string, listTitle: string, listDate: Date | null) => {
     return async (dispatch: Dispatch<ListsAction>) => {
+
         try {
             dispatch({ type: ListsActionTypes.FETCH_LISTS_PATCH });
+            
 
             await axios.patch<IPoint[]>('https://todo-f4967-default-rtdb.firebaseio.com/data.json',
                 JSON.stringify({
-                    [listId]: {
+                    [listId]: { 
                         points,
-                        "listTitle": listTitle
+                        "listTitle": listTitle,
+                        "listDate": listDate,
                     }
                 }));
+                
         }
         catch (e: unknown) {
             const error = e as AxiosError
@@ -77,18 +83,21 @@ export const fetchPatchList = (points: IPoint[], listId: string, listTitle: stri
     }
 }
 
-export const fetchPostList = (points: IPoint[], callback: (listID: string) => void) => {
+export const fetchPostList = (points: IPoint[], listIdCallback: (listID: string) => void, listDateCallback: (listDate: Date | null) => void) => {
     return async (dispatch: Dispatch<ListsAction>) => {
         try {
             dispatch({ type: ListsActionTypes.FETCH_LISTS_POST });
+            const date = new Date();
 
             const response = await axios.post('https://todo-f4967-default-rtdb.firebaseio.com/data.json',
                 JSON.stringify({
                     points,
-                    "listTitle": ""
+                    "listTitle": "",
+                    "listDate": date.toJSON()
                 }))
 
-            callback(response.data.name);
+                listIdCallback(response.data.name);
+                listDateCallback(date)
         }
         catch (e: unknown) {
             const error = e as AxiosError
